@@ -30,7 +30,8 @@ if ($result->num_rows > 0) {
     exit();
 } else {
     // Credenciais inválidas
-    echo "Usuário ou senha incorretos. Por favor, tente novamente.";
+    //echo "Usuário ou senha incorretos. Por favor, tente novamente.";
+    header("Location: http://localhost/desafio-php/logininvalido.php");
 }
 
 $conn->close();

@@ -5,7 +5,7 @@ session_start(); // Iniciar a sessão
 
 if (isset($_SESSION["nome_usuario"])) {
     $nome_usuario = $_SESSION["nome_usuario"];
-    
+
     // Agora você pode mostrar o nome do usuário na página nova_pagina.php
 } else {
     // Se o usuário não estiver logado, redirecionar novamente para o formulário de login
@@ -16,19 +16,61 @@ if (isset($_SESSION["nome_usuario"])) {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Tela Principal</title>
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
-<body>
-    <h2>Voce esta Logado <?php echo $nome_usuario; ?></h2>
 
-    <!-- Menu com a opção "Cadastro de Usuário" -->
-    <ul>
-        <li><a href="cadastrousuario.php">Cadastro de Usuário</a></li>
-        <li><a href="arquivo.php">Importa Arquivo</a></li>
-        <li><a href="repositoriogithubusuarios.php">Repositorios Github</a></li>
-        
-        <!-- Outras opções do menu podem ser adicionadas aqui -->
-    </ul>
+<body>
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100">
+                <form class="login100-form validate-form">
+                    <span class="login100-form-title p-b-26">
+                        <h2>Bem Vindo <?php echo $nome_usuario; ?></h2>
+                    </span>
+
+                    <div class="container-login100-form-btn">
+                        <div class="wrap-login100-form-btn">
+                            <div class="login100-form-bgbtn"></div>
+                            <button class="login100-form-btn" type="button" onclick="redirecionarCadastro()">
+                            Cadastro de Usuário
+                            </button>
+                        </div>
+                    </div>
+                    <div class="container-login100-form-btn">
+                        <div class="wrap-login100-form-btn">
+                            <div class="login100-form-bgbtn"></div>
+                            <button class="login100-form-btn" type="button" onclick="redirecionarArquivo()">
+                            Importa Arquivo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="container-login100-form-btn">
+                        <div class="wrap-login100-form-btn">
+                            <div class="login100-form-bgbtn"></div>
+                            <button class="login100-form-btn" type="button"  onclick="redirecionarGithub()">
+                            Repositorios Github
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function redirecionarGithub() {
+            window.location.href = "repositoriogithubusuarios.php";
+        }
+        function redirecionarArquivo() {
+            window.location.href = "arquivo.php";
+        }
+        function redirecionarCadastro() {
+            window.location.href = "cadastrousuario.php";
+        }
+    </script>
 </body>
+
 </html>

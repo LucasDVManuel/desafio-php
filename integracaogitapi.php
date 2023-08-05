@@ -27,6 +27,7 @@ $repositorios = json_decode($resposta, true);
 // Verifica se a requisição foi bem-sucedida
 if (is_array($repositorios)) {
     echo "<h1>Repositórios do usuário {$usuario_github}</h1>";
+    echo "<a href=\"repositoriogithubusuarios.php\">Voltar</a>";
     foreach ($repositorios as $repo) {
         echo "<h2>{$repo['name']}</h2>";
         echo "<p><strong>Descrição:</strong> {$repo['description']}</p>";

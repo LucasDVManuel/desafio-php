@@ -10,22 +10,25 @@ if (isset($_POST['btnImportar'])) {
 }
 
 if (isset($_POST['btnquery1'])) {
-    echo "entrou na query 1";
     $sql = "select * from organizacao where `Number_of_employees` > 5000 order by `name` asc";
-    execultaSQL($sql);
+    $opcao = '1';
+    execultaSQL($sql, $opcao);
 }
 
 if (isset($_POST['btnquery2'])) {
     $sql = "select * from organizacao where `Founded` < 2000 and `Number_of_employees` < 1000  order by `Founded` desc";
-    execultaSQL($sql);
+    $opcao = '2';
+    execultaSQL($sql, $opcao);
 }
 
 if (isset($_POST['btnquery3'])) {
-    $sql = "select * from organizacao";
-    execultaSQL($sql);
+    $sql = "select count(OrganizationId) as qtdOrgs, sum(Number_of_employees) as qtdEmployees, Industry , Country 
+    from organizacao group by Industry , Country  order by Industry";
+    $opcao = '3';
+    execultaSQL($sql, $opcao);
 }
 
-function execultaSQL($sql){
+function execultaSQL($sql, $opcao){
     global $host;
     global $dbname;
     global $username;
@@ -45,9 +48,15 @@ try{
     if ($result->rowCount() > 0) {
         // Exibe os dados
         echo "<h2>Resultados:</h2>";
+        echo "<a href=\"arquivo.php\">Voltar</a>";
         echo "<ul>";
         foreach ($result as $row) {
-            echo "<li>{$row['Index']} - {$row['OrganizationId']} - {$row['Name']}</li>"; // Substitua 'coluna1', 'coluna2', etc. pelas colunas que você deseja exibir
+            //echo "<li>{$row['Index']} - {$row['OrganizationId']} - {$row['Name']}</li>"; // Substitua 'coluna1', 'coluna2', etc. pelas colunas que você deseja exibir
+            if($opcao == '3'){
+                echo "<li>{$row['qtdOrgs']} - {$row['qtdEmployees']} - {$row['Industry']} - {$row['Country']}</li>";
+            }else{
+                echo "<li>{$row['Index']} - {$row['OrganizationId']} - {$row['Name']} - {$row['Website']} - {$row['Country']} - {$row['Description']} - {$row['Founded']} - {$row['Industry']} - {$row['Number_of_employees']}</li>";
+            }
         }
         echo "</ul>";
     } else {
@@ -60,9 +69,12 @@ try{
 }
 }
 
-function sanitizeData(){
-
-    return "resultado consulta";
+function validaDados($dados){
+    if($dados == null){
+        return "";
+    }else{
+        return $dados;
+    }
 }
 
 function importaDados(){
@@ -88,16 +100,21 @@ try {
     // Loop para ler o CSV e inserir os dados em lotes
     while (($data = fgetcsv($csvFile)) !== false) {
         // Inserir dados no banco de dados
-        // Substitua "tabela" pelo nome da sua tabela e "$data[0]", "$data[1]", etc. pelas colunas do CSV
-        $sql = "INSERT INTO organizacao (OrganizationId, Name, Website, Country, Description, Founded, Industry, Number_of_employees)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$data[1], $data[2], $data[3], $data[4], $data[5], $data[6], $data[7], $data[8]]); // Ajuste para a quantidade de colunas no seu CSV
 
-        // Verifica se chegou ao tamanho do lote e, se sim, confirma a transação
-        if ($stmt->rowCount() % $batchSize === 0) {
-            $conn->commit();
-            $conn->beginTransaction();
+        //poderia ter feito ele começar a inserir na segunda linha porem sempre seria necessario o arquivo ter uma linha de cabeçalho
+        if($data[1] != "Organization Id"){
+            
+            $sql = "INSERT INTO organizacao (OrganizationId, Name, Website, Country, Description, Founded, Industry, Number_of_employees)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            //$stmt->execute([$data[1], $data[2], $data[3], $data[4], $data[5], $data[6], $data[7], $data[8]]); // Ajuste para a quantidade de colunas no seu CSV
+            $stmt->execute([validaDados($data[1]), validaDados($data[2]), validaDados($data[3]), validaDados($data[4]), validaDados($data[5]), validaDados($data[6]), validaDados($data[7]), validaDados($data[8])]); // Ajuste para a quantidade de colunas no seu CSV
+
+            // Verifica se chegou ao tamanho do lote e, se sim, confirma a transação
+            if ($stmt->rowCount() % $batchSize === 0) {
+                $conn->commit();
+                $conn->beginTransaction();
+            }
         }
     }
 
@@ -113,6 +130,7 @@ try {
     $conn->rollBack();
     echo "Erro: " . $e->getMessage();
 }
+echo "<br><a href=\"arquivo.php\">Voltar</a>";
 }
 
 
