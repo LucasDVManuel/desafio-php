@@ -3,7 +3,7 @@
 //$usuario_github = 'jhernandes';
 $usuario_github = $_POST['usuariogit'];
 
-$token_github = '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';
+$token_github = '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';//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
 
 // URL da API do GitHub para obter os repositórios do usuário
 $url_api_github = "https://api.github.com/users/{$usuario_github}/repos";
